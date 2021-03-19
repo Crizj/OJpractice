@@ -28,6 +28,10 @@ class Solution
 public:
     int trap(vector<int>& height) 
     {
+        /*
+            The solution used by me is not the best.
+            check https://leetcode.com/problems/trapping-rain-water/solution/ for better solution.
+        */
         vector<int> result(height.size(),0);
         int max_id = -1,max = 0;
         for(int i = 0; i < height.size(); i++)
