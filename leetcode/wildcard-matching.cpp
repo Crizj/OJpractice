@@ -44,57 +44,95 @@ p contains only lowercase English letters, '?' or '*'.
 #include<vector>
 #include<algorithm>
 #include<string>
+#include<time.h>
 using namespace std;
 //尝试1： Time Limit Exceeded
 //input: abbabbbaabaaabbbbbabbabbabbbabbaaabbbababbabaaabbab *aabb***aa**a******aa*
 
-// class Solution 
-// {
-//     vector<vector<int>> result;
-//     string s,p;
-// public:
-//     bool isMatch(string s, string p) 
-//     {
-//         result.resize(s.length()+1,vector<int> (p.length()+1,-1));
-//         result[0][0] = 1;
-//         this->s = s;
-//         this->p = p;
-//         if(dp(s.length(),p.length()) == 1) 
-//         {
-//             cout << "true" << endl;
-//             return true;
-//         }
-//         else
-//         {
-//             cout << "false" << endl;
-//             return false;
-//         }
-//     }
-//     int dp(int i, int j)
-//     {
-//         if(result[i][j] != -1) return result[i][j];
-//         if(i != 0 && j == 0) return 0;
-//         if(p[j-1] == '*') //dp[i,j-1] || dp[i-1,j-1] || dp[i-2,j-1] || ... ||  dp[1][j-1] || dp[0,j-1]
-//         {
-//             for(int m = 0; m <= i; m++)
-//             {
-//                 if(dp(m,j-1) == 1) return 1;
-//             }
-//         }
-//         else if(i == 0) return 0;
-//         else if(s[i-1] == p[j-1] || p[j-1] == '?') return dp(i-1,j-1);
-//         return 0; // s[i] != p[j]
-//     }
-// };
+//最终还是AC了。原来是我的状态方程有问题
+// P[i][j] = P[i - 1][j - 1] && (s[i - 1] == p[j - 1] || p[j - 1] == '?'), if p[j - 1] != '*';
+// P[i][j] = P[i][j - 1] || P[i - 1][j], if p[j - 1] == '*'.
+class Solution 
+{
+    vector<vector<int>> result;
+    string s,pattern;
+public:
+    bool isMatch(string s, string p) 
+    {
+        this->s = s;
+        int last = -1;
+        for(int i = 0; i < p.length(); i++)
+        {
+            if(last >= 0 && p[i] == '*' && p[last] == '*')
+            {
+                //do nothing
+            }
+            else 
+            {
+                pattern.push_back(p[i]);
+                last = i;
+            }
+        }
+        //cout << pattern << endl;
+        result.resize(s.length()+1,vector<int> (pattern.length()+1,-1));
+        result[0][0] = 1;
+        
+        if(dp(s.length(),pattern.length()) == 1) 
+        {
+            cout << "true" << endl;
+            return true;
+        }
+        else
+        {
+            cout << "false" << endl;
+            return false;
+        }
+    }
+    int dp(int i, int j)
+    {
+        //cout << i << " " << j << endl;
+        if(result[i][j] != -1) return result[i][j];
+        if(i != 0 && j == 0) 
+        {
+            result[i][j] = 0;
+            return 0;
+        }
+        if(pattern[j-1] == '*') //dp[i,j-1] || dp[i-1,j]
+        {
+            if(i > 0) 
+            {
+                result[i][j] = dp(i,j-1) || dp(i-1,j);
+            }
+            else result[i][j] = dp(i,j-1);
+            return result[i][j];
+        }
+        else if(i == 0) 
+        {
+            result[i][j] = 0;
+            return 0;
+        }
+        else if(s[i-1] == pattern[j-1] || pattern[j-1] == '?') 
+        {
+            result[i][j] = dp(i-1,j-1);
+            return result[i][j];
+        }
+        result[i][j] = 0;
+        return 0; // s[i] != p[j]
+    }
+};
 
 int main()
 {
     while(1)
     {
+        clock_t start,end;
         string s,p;
         cin >> s >> p;
         Solution x;
+        start = clock();
         x.isMatch(s,p);
+        end = clock();
+        cout << "Time:" << (double)(end-start)/1000 << endl;
     }
     return 0;
 }
