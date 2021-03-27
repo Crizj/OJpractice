@@ -20,3 +20,7 @@ Garbage written by one poor student
 # Leetcode真香！
 不仅给出了报错的测试用例，还能在线学习大神的代码。我永远喜欢leetcode!
 
+没钱开会员可太难受了
+
+这也太贵了吧！！！！！
+
