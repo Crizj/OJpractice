@@ -20,7 +20,7 @@ public:
         {
             if(m[S[i]-'a'] == -1)   //input char has never appeared before
             {
-                dp[i] = dp[i-1]*2+1;
+                dp[i] = (dp[i-1]*2+1)%mod;
                 //dp[i] = dp[i]%1000000007;
             }
             else 
@@ -29,15 +29,10 @@ public:
                 if(m[S[i]-'a']-1 >= 0) 
                 {
 
-                    dp[i] = dp[i-1]*2 - dp[m[S[i]-'a']-1];
+                    dp[i] = (dp[i-1]*2 - dp[m[S[i]-'a']-1] + mod )%mod;
                 }
-                else dp[i] = dp[i-1]*2;
+                else dp[i] = (dp[i-1]*2)%mod;
             }
-            if(dp[i] < 0)
-            {
-                cout << "???" << endl;
-            }
-            dp[i] = dp[i]%mod;
             m[S[i]-'a'] = i;
         }
         cout << dp[S.length()-1] << endl;
